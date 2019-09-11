@@ -2,20 +2,21 @@
 
 namespace LaravelFCM\Response;
 
-use Psr\Http\Message\ResponseInterface;
-use LaravelFCM\Response\Exceptions\ServerResponseException;
 use LaravelFCM\Response\Exceptions\InvalidRequestException;
+use LaravelFCM\Response\Exceptions\ServerResponseException;
 use LaravelFCM\Response\Exceptions\UnauthorizedRequestException;
+use Psr\Http\Message\ResponseInterface;
+use function config;
 
 /**
  * Class BaseResponse.
  */
 abstract class BaseResponse
 {
-    const SUCCESS = 'success';
-    const FAILURE = 'failure';
-    const ERROR = 'error';
-    const MESSAGE_ID = 'message_id';
+    public const SUCCESS = 'success';
+    public const FAILURE = 'failure';
+    public const ERROR = 'error';
+    public const MESSAGE_ID = 'message_id';
 
     /**
      * @var bool
@@ -24,13 +25,15 @@ abstract class BaseResponse
 
     /**
      * BaseResponse constructor.
-     *
      * @param \Psr\Http\Message\ResponseInterface $response
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
      */
     public function __construct(ResponseInterface $response)
     {
         $this->isJsonResponse($response);
-        $this->logEnabled = app('config')->get('fcm.log_enabled', false);
+        $this->logEnabled = config('fcm.log_enabled', false);
         $responseInJson = json_decode($response->getBody(), true);
         $this->parseResponse($responseInJson);
     }
@@ -44,17 +47,17 @@ abstract class BaseResponse
      * @throws ServerResponseException
      * @throws UnauthorizedRequestException
      */
-    private function isJsonResponse(ResponseInterface $response)
+    private function isJsonResponse(ResponseInterface $response): void
     {
-        if ($response->getStatusCode() == 200) {
+        if ($response->getStatusCode() === 200) {
             return;
         }
 
-        if ($response->getStatusCode() == 400) {
+        if ($response->getStatusCode() === 400) {
             throw new InvalidRequestException($response);
         }
 
-        if ($response->getStatusCode() == 401) {
+        if ($response->getStatusCode() === 401) {
             throw new UnauthorizedRequestException($response);
         }
 

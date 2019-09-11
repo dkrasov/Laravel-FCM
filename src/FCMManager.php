@@ -1,21 +1,33 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Manager;
 
+/**
+ * Class FCMManager
+ *
+ * @package LaravelFCM
+ */
 class FCMManager extends Manager
 {
-    public function getDefaultDriver()
+    /**
+     * Get the default driver name.
+     *
+     * @return string
+     */
+    public function getDefaultDriver(): string
     {
-        return $this->app[ 'config' ][ 'fcm.driver' ];
+        return (string)config('fcm.driver');
     }
 
-    protected function createHttpDriver()
+    /**
+     * @return \GuzzleHttp\Client
+     */
+    protected function createHttpDriver(): Client
     {
-        $config = $this->app[ 'config' ]->get('fcm.http', []);
-
-        return new Client(['timeout' => $config[ 'timeout' ]]);
+        return new Client(['timeout' => config('fcm.http.timeout')]);
     }
 }

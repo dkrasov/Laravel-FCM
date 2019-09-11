@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
@@ -24,9 +25,9 @@ class Topics
      *
      * @param string $first topicName
      *
-     * @return $this
+     * @return self
      */
-    public function topic($first)
+    public function topic(string $first): self
     {
         $this->conditions[] = compact('first');
 
@@ -60,9 +61,9 @@ class Topics
      *
      * @param string|Closure $first topicName or closure
      *
-     * @return Topics
+     * @return self
      */
-    public function orTopic($first)
+    public function orTopic($first): self
     {
         return $this->on($first, ' || ');
     }
@@ -94,22 +95,22 @@ class Topics
      *
      * @param string|Closure $first topicName or closure
      *
-     * @return Topics
+     * @return self
      */
-    public function andTopic($first)
+    public function andTopic($first): self
     {
         return $this->on($first, ' && ');
     }
 
     /**
-     * @internal
-     *
      * @param $first
      * @param $condition
      *
-     * @return $this|Topics
+     * @return self
+     * @internal
+     *
      */
-    private function on($first, $condition)
+    private function on($first, $condition): self
     {
         if ($first instanceof Closure) {
             return $this->nest($first, $condition);
@@ -121,14 +122,14 @@ class Topics
     }
 
     /**
-     * @internal
-     *
      * @param Closure $callback
      * @param         $condition
      *
-     * @return $this
+     * @return self
+     * @internal
+     *
      */
-    public function nest(Closure $callback, $condition)
+    public function nest(Closure $callback, $condition): self
     {
         $topic = new static();
 
@@ -148,8 +149,7 @@ class Topics
      * Transform to array.
      *
      * @return array|string
-     *
-     * @throws NoTopicProvided
+     * @throws \LaravelFCM\Message\Exceptions\NoTopicProvidedException
      */
     public function build()
     {
@@ -167,13 +167,13 @@ class Topics
     }
 
     /**
-     * @internal
-     *
-     * @param $conditions
+     * @param array $conditions
      *
      * @return string
+     *@internal
+     *
      */
-    private function topicsForFcm($conditions)
+    private function topicsForFcm(array $conditions): string
     {
         $condition = '';
         foreach ($conditions as $partial) {
@@ -207,17 +207,18 @@ class Topics
      *
      * @return bool
      */
-    public function hasOnlyOneTopic()
+    public function hasOnlyOneTopic(): bool
     {
-        return count($this->conditions) == 1;
+        return count($this->conditions) === 1;
     }
 
     /**
-     * @internal
-     *
+     * @return void
      * @throws NoTopicProvidedException
+     *@internal
+     *
      */
-    private function checkIfOneTopicExist()
+    private function checkIfOneTopicExist(): void
     {
         if (!count($this->conditions)) {
             throw new NoTopicProvidedException('At least one topic must be provided');

@@ -1,9 +1,12 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Request;
 
 /**
- * Class GroupRequest.
+ * Class GroupRequest
+ *
+ * @package LaravelFCM\Request
  */
 class GroupRequest extends BaseRequest
 {
@@ -58,7 +61,7 @@ class GroupRequest extends BaseRequest
      *
      * @return array
      */
-    protected function buildBody()
+    protected function buildBody(): array
     {
         return [
             'operation' => $this->operation,

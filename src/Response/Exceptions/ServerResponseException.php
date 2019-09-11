@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response\Exceptions;
 
@@ -6,7 +7,9 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class ServerResponseException.
+ * Class ServerResponseException
+ *
+ * @package LaravelFCM\Response\Exceptions
  */
 class ServerResponseException extends Exception
 {

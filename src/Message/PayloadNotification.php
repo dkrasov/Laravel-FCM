@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * Class PayloadNotification.
+ * Class PayloadNotification
+ *
+ * @package LaravelFCM\Message
  */
 class PayloadNotification implements Arrayable
 {
@@ -127,29 +130,29 @@ class PayloadNotification implements Arrayable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $notification = [
-            'title' => $this->title,
-            'body' => $this->body,
+            'title'              => $this->title,
+            'body'               => $this->body,
             'android_channel_id' => $this->channelId,
-            'icon' => $this->icon,
-            'sound' => $this->sound,
-            'badge' => $this->badge,
-            'tag' => $this->tag,
-            'color' => $this->color,
-            'click_action' => $this->clickAction,
-            'body_loc_key' => $this->bodyLocationKey,
-            'body_loc_args' => $this->bodyLocationArgs,
-            'title_loc_key' => $this->titleLocationKey,
-            'title_loc_args' => $this->titleLocationArgs,
+            'icon'               => $this->icon,
+            'sound'              => $this->sound,
+            'badge'              => $this->badge,
+            'tag'                => $this->tag,
+            'color'              => $this->color,
+            'click_action'       => $this->clickAction,
+            'body_loc_key'       => $this->bodyLocationKey,
+            'body_loc_args'      => $this->bodyLocationArgs,
+            'title_loc_key'      => $this->titleLocationKey,
+            'title_loc_args'     => $this->titleLocationArgs,
         ];
 
         // remove null values
-        $notification = array_filter($notification, function($value) {
+        $notification = array_filter($notification, static function ($value): bool {
             return $value !== null;
         });
-        
+
         return $notification;
     }
 }

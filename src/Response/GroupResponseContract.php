@@ -1,9 +1,12 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response;
 
 /**
- * Interface GroupResponseContract.
+ * Interface GroupResponseContract
+ *
+ * @package LaravelFCM\Response
  */
 interface GroupResponseContract
 {
@@ -12,19 +15,19 @@ interface GroupResponseContract
      *
      * @return int
      */
-    public function numberSuccess();
+    public function numberSuccess(): int;
 
     /**
      * Get the number of device which thrown an error.
      *
      * @return int
      */
-    public function numberFailure();
+    public function numberFailure(): int;
 
     /**
      * Get all token in group that fcm cannot reach.
      *
      * @return array
      */
-    public function tokensFailed();
+    public function tokensFailed(): array;
 }

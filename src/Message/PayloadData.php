@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * Class PayloadData.
+ * Class PayloadData
+ *
+ * @package LaravelFCM\Message
  */
 class PayloadData implements Arrayable
 {
@@ -31,7 +34,7 @@ class PayloadData implements Arrayable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->data;
     }

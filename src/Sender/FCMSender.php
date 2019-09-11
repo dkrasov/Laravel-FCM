@@ -1,39 +1,49 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Sender;
 
-use LaravelFCM\Message\Topics;
-use LaravelFCM\Request\Request;
+use GuzzleHttp\Exception\ClientException;
 use LaravelFCM\Message\Options;
 use LaravelFCM\Message\PayloadData;
+use LaravelFCM\Message\PayloadNotification;
+use LaravelFCM\Message\Topics;
+use LaravelFCM\Request\Request;
+use LaravelFCM\Response\DownstreamResponse;
 use LaravelFCM\Response\GroupResponse;
 use LaravelFCM\Response\TopicResponse;
-use GuzzleHttp\Exception\ClientException;
-use LaravelFCM\Response\DownstreamResponse;
-use LaravelFCM\Message\PayloadNotification;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class FCMSender.
+ * Class FCMSender
+ *
+ * @package LaravelFCM\Sender
  */
 class FCMSender extends HTTPSender
 {
-    const MAX_TOKEN_PER_REQUEST = 1000;
+    public const MAX_TOKEN_PER_REQUEST = 1000;
 
     /**
-     * send a downstream message to.
-     *
+     * Send a downstream message to:
      * - a unique device with is registration Token
      * - or to multiples devices with an array of registrationIds
      *
-     * @param string|array             $to
-     * @param Options|null             $options
-     * @param PayloadNotification|null $notification
-     * @param PayloadData|null         $data
+     * @param $to
+     * @param \LaravelFCM\Message\Options|null $options
+     * @param \LaravelFCM\Message\PayloadNotification|null $notification
+     * @param \LaravelFCM\Message\PayloadData|null $data
      *
-     * @return DownstreamResponse|null
+     * @return \LaravelFCM\Response\DownstreamResponse|null
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
      */
-    public function sendTo($to, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
-    {
+    public function sendTo(
+        $to,
+        Options $options = null,
+        PayloadNotification $notification = null,
+        PayloadData $data = null
+    ): ?DownstreamResponse {
         $response = null;
 
         if (is_array($to) && !empty($to)) {
@@ -63,15 +73,22 @@ class FCMSender extends HTTPSender
     /**
      * Send a message to a group of devices identified with them notification key.
      *
-     * @param                          $notificationKey
-     * @param Options|null             $options
-     * @param PayloadNotification|null $notification
-     * @param PayloadData|null         $data
+     * @param $notificationKey
+     * @param \LaravelFCM\Message\Options|null $options
+     * @param \LaravelFCM\Message\PayloadNotification|null $notification
+     * @param \LaravelFCM\Message\PayloadData|null $data
      *
-     * @return GroupResponse
+     * @return \LaravelFCM\Response\GroupResponse
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
      */
-    public function sendToGroup($notificationKey, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
-    {
+    public function sendToGroup(
+        $notificationKey,
+        Options $options = null,
+        PayloadNotification $notification = null,
+        PayloadData $data = null
+    ): GroupResponse {
         $request = new Request($notificationKey, $options, $notification, $data);
 
         $responseGuzzle = $this->post($request);
@@ -82,15 +99,23 @@ class FCMSender extends HTTPSender
     /**
      * Send message devices registered at a or more topics.
      *
-     * @param Topics                   $topics
-     * @param Options|null             $options
-     * @param PayloadNotification|null $notification
-     * @param PayloadData|null         $data
+     * @param \LaravelFCM\Message\Topics $topics
+     * @param \LaravelFCM\Message\Options|null $options
+     * @param \LaravelFCM\Message\PayloadNotification|null $notification
+     * @param \LaravelFCM\Message\PayloadData|null $data
      *
-     * @return TopicResponse
+     * @return \LaravelFCM\Response\TopicResponse
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendToTopic(Topics $topics, Options $options = null, PayloadNotification $notification = null, PayloadData $data = null)
-    {
+    public function sendToTopic(
+        Topics $topics,
+        Options $options = null,
+        PayloadNotification $notification = null,
+        PayloadData $data = null
+    ): TopicResponse {
         $request = new Request(null, $options, $notification, $data, $topics);
 
         $responseGuzzle = $this->post($request);
@@ -99,13 +124,13 @@ class FCMSender extends HTTPSender
     }
 
     /**
+     * @param $request
+     *
+     * @return \Psr\Http\Message\ResponseInterface|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @internal
-     *
-     * @param \LaravelFCM\Request\Request $request
-     *
-     * @return null|\Psr\Http\Message\ResponseInterface
      */
-    protected function post($request)
+    protected function post($request): ?ResponseInterface
     {
         try {
             $responseGuzzle = $this->client->request('post', $this->url, $request->build());

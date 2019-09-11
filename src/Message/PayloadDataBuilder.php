@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
@@ -23,9 +24,9 @@ class PayloadDataBuilder
      *
      * @param array $data
      *
-     * @return PayloadDataBuilder
+     * @return self
      */
-    public function addData(array $data)
+    public function addData(array $data): self
     {
         $this->data = $this->data ?: [];
 
@@ -39,9 +40,9 @@ class PayloadDataBuilder
      *
      * @param array $data
      *
-     * @return PayloadDataBuilder
+     * @return self
      */
-    public function setData(array $data)
+    public function setData(array $data): self
     {
         $this->data = $data;
 
@@ -50,8 +51,10 @@ class PayloadDataBuilder
 
     /**
      * Remove all data.
+     *
+     * @return void
      */
-    public function removeAllData()
+    public function removeAllData(): void
     {
         $this->data = null;
     }
@@ -61,17 +64,17 @@ class PayloadDataBuilder
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * generate a PayloadData.
+     * Generate new PayloadData instance.
      *
-     * @return PayloadData new PayloadData instance
+     * @return PayloadData
      */
-    public function build()
+    public function build(): PayloadData
     {
         return new PayloadData($this);
     }

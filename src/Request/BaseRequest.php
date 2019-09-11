@@ -1,9 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Request;
 
+use function config;
+
 /**
- * Class BaseRequest.
+ * Class BaseRequest
+ *
+ * @package LaravelFCM\Request
  */
 abstract class BaseRequest
 {
@@ -26,7 +31,7 @@ abstract class BaseRequest
      */
     public function __construct()
     {
-        $this->config = app('config')->get('fcm.http', []);
+        $this->config = config('fcm.http', []);
     }
 
     /**
@@ -34,12 +39,12 @@ abstract class BaseRequest
      *
      * @return array
      */
-    protected function buildRequestHeader()
+    protected function buildRequestHeader(): array
     {
         return [
             'Authorization' => 'key='.$this->config['server_key'],
-            'Content-Type' => 'application/json',
-            'project_id' => $this->config['sender_id'],
+            'Content-Type'  => 'application/json',
+            'project_id'    => $this->config['sender_id'],
         ];
     }
 
@@ -55,11 +60,11 @@ abstract class BaseRequest
      *
      * @return array
      */
-    public function build()
+    public function build(): array
     {
         return [
             'headers' => $this->buildRequestHeader(),
-            'json' => $this->buildBody(),
+            'json'    => $this->buildBody(),
         ];
     }
 }

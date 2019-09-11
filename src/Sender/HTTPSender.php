@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Sender;
 
 use GuzzleHttp\ClientInterface;
 
 /**
- * Class BaseSender.
+ * Class HTTPSender
+ *
+ * @package LaravelFCM\Sender
  */
 abstract class HTTPSender
 {

@@ -1,17 +1,20 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response;
 
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class GroupResponse.
+ * Class GroupResponse
+ *
+ * @package LaravelFCM\Response
  */
 class GroupResponse extends BaseResponse implements GroupResponseContract
 {
-    const FAILED_REGISTRATION_IDS = 'failed_registration_ids';
+    public const FAILED_REGISTRATION_IDS = 'failed_registration_ids';
 
     /**
      * @internal
@@ -43,9 +46,11 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
 
     /**
      * GroupResponse constructor.
-     *
      * @param \Psr\Http\Message\ResponseInterface $response
-     * @param                $to
+     * @param $to
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
      */
     public function __construct(ResponseInterface $response, $to)
     {
@@ -57,8 +62,10 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
      * parse the response.
      *
      * @param $responseInJson
+     *
+     * @return void
      */
-    protected function parseResponse($responseInJson)
+    protected function parseResponse($responseInJson): void
     {
         if ($this->parse($responseInJson)) {
             $this->parseFailed($responseInJson);
@@ -71,8 +78,11 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
 
     /**
      * Log the response.
+     *
+     * @return void
+     * @throws \Exception
      */
-    protected function logResponse()
+    protected function logResponse(): void
     {
         $logger = new Logger('Laravel-FCM');
         $logger->pushHandler(new StreamHandler(storage_path('logs/laravel-fcm.log')));
@@ -84,13 +94,13 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
     }
 
     /**
-     * @internal
-     *
      * @param $responseInJson
      *
      * @return bool
+     * @internal
+     *
      */
-    private function parse($responseInJson)
+    private function parse($responseInJson): bool
     {
         if (array_key_exists(self::SUCCESS, $responseInJson)) {
             $this->numberTokensSuccess = $responseInJson[self::SUCCESS];
@@ -103,11 +113,13 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
     }
 
     /**
+     * @param $responseInJson
+     *
+     * @return void
      * @internal
      *
-     * @param $responseInJson
      */
-    private function parseFailed($responseInJson)
+    private function parseFailed($responseInJson): void
     {
         if (array_key_exists(self::FAILED_REGISTRATION_IDS, $responseInJson)) {
             foreach ($responseInJson[self::FAILED_REGISTRATION_IDS] as $registrationId) {
@@ -121,7 +133,7 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
      *
      * @return int
      */
-    public function numberSuccess()
+    public function numberSuccess(): int
     {
         return $this->numberTokensSuccess;
     }
@@ -131,7 +143,7 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
      *
      * @return int
      */
-    public function numberFailure()
+    public function numberFailure(): int
     {
         return $this->numberTokensFailure;
     }
@@ -141,7 +153,7 @@ class GroupResponse extends BaseResponse implements GroupResponseContract
      *
      * @return array
      */
-    public function tokensFailed()
+    public function tokensFailed(): array
     {
         return $this->tokensFailed;
     }

@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * Class Options.
+ * Class Options
+ *
+ * @package LaravelFCM\Message
  */
 class Options implements Arrayable
 {
@@ -87,7 +90,7 @@ class Options implements Arrayable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $contentAvailable = $this->contentAvailable ? true : null;
         $mutableContent = $this->isMutableContent ? true : null;
@@ -95,14 +98,14 @@ class Options implements Arrayable
         $dryRun = $this->isDryRun ? true : null;
 
         $options = [
-            'collapse_key' => $this->collapseKey,
-            'priority' => $this->priority,
-            'content_available' => $contentAvailable,
-            'mutable_content' => $mutableContent,
-            'delay_while_idle' => $delayWhileIdle,
-            'time_to_live' => $this->timeToLive,
+            'collapse_key'            => $this->collapseKey,
+            'priority'                => $this->priority,
+            'content_available'       => $contentAvailable,
+            'mutable_content'         => $mutableContent,
+            'delay_while_idle'        => $delayWhileIdle,
+            'time_to_live'            => $this->timeToLive,
             'restricted_package_name' => $this->restrictedPackageName,
-            'dry_run' => $dryRun,
+            'dry_run'                 => $dryRun,
         ];
 
         return array_filter($options);

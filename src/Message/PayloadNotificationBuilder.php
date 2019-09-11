@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
@@ -118,9 +119,9 @@ class PayloadNotificationBuilder
      *
      * @param string $title
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -132,9 +133,9 @@ class PayloadNotificationBuilder
      *
      * @param string $body
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setBody($body)
+    public function setBody(string $body): self
     {
         $this->body = $body;
 
@@ -146,9 +147,9 @@ class PayloadNotificationBuilder
      *
      * @param string $channelId
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setChannelId($channelId)
+    public function setChannelId(string $channelId): self
     {
         $this->channelId = $channelId;
 
@@ -161,9 +162,9 @@ class PayloadNotificationBuilder
      *
      * @param string $icon
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setIcon($icon)
+    public function setIcon(string $icon): self
     {
         $this->icon = $icon;
 
@@ -176,9 +177,9 @@ class PayloadNotificationBuilder
      *
      * @param string $sound
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setSound($sound)
+    public function setSound(string $sound): self
     {
         $this->sound = $sound;
 
@@ -192,9 +193,9 @@ class PayloadNotificationBuilder
      *
      * @param string $badge
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setBadge($badge)
+    public function setBadge(string $badge): self
     {
         $this->badge = $badge;
 
@@ -210,9 +211,9 @@ class PayloadNotificationBuilder
      *
      * @param string $tag
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setTag($tag)
+    public function setTag(string $tag): self
     {
         $this->tag = $tag;
 
@@ -226,9 +227,9 @@ class PayloadNotificationBuilder
      *
      * @param string $color
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setColor($color)
+    public function setColor(string $color): self
     {
         $this->color = $color;
 
@@ -240,9 +241,9 @@ class PayloadNotificationBuilder
      *
      * @param string $action
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setClickAction($action)
+    public function setClickAction(string $action): self
     {
         $this->clickAction = $action;
 
@@ -254,9 +255,9 @@ class PayloadNotificationBuilder
      *
      * @param string $titleKey
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setTitleLocationKey($titleKey)
+    public function setTitleLocationKey(string $titleKey): self
     {
         $this->titleLocationKey = $titleKey;
 
@@ -268,9 +269,9 @@ class PayloadNotificationBuilder
      *
      * @param mixed $titleArgs
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setTitleLocationArgs($titleArgs)
+    public function setTitleLocationArgs($titleArgs): self
     {
         $this->titleLocationArgs = $titleArgs;
 
@@ -282,9 +283,9 @@ class PayloadNotificationBuilder
      *
      * @param string $bodyKey
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setBodyLocationKey($bodyKey)
+    public function setBodyLocationKey(string $bodyKey): self
     {
         $this->bodyLocationKey = $bodyKey;
 
@@ -296,9 +297,9 @@ class PayloadNotificationBuilder
      *
      * @param mixed $bodyArgs
      *
-     * @return PayloadNotificationBuilder current instance of the builder
+     * @return self
      */
-    public function setBodyLocationArgs($bodyArgs)
+    public function setBodyLocationArgs($bodyArgs): self
     {
         $this->bodyLocationArgs = $bodyArgs;
 
@@ -310,7 +311,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -320,7 +321,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getBody()
+    public function getBody(): ?string
     {
         return $this->body;
     }
@@ -330,7 +331,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getChannelId()
+    public function getChannelId(): ?string
     {
         return $this->channelId;
     }
@@ -340,7 +341,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -350,7 +351,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getSound()
+    public function getSound(): ?string
     {
         return $this->sound;
     }
@@ -360,7 +361,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getBadge()
+    public function getBadge(): ?string
     {
         return $this->badge;
     }
@@ -370,7 +371,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getTag()
+    public function getTag(): ?string
     {
         return $this->tag;
     }
@@ -380,7 +381,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getColor()
+    public function getColor(): ?string
     {
         return $this->color;
     }
@@ -390,7 +391,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getClickAction()
+    public function getClickAction(): ?string
     {
         return $this->clickAction;
     }
@@ -400,7 +401,7 @@ class PayloadNotificationBuilder
      *
      * @return null|string
      */
-    public function getBodyLocationKey()
+    public function getBodyLocationKey(): ?string
     {
         return $this->bodyLocationKey;
     }
@@ -420,7 +421,7 @@ class PayloadNotificationBuilder
      *
      * @return string
      */
-    public function getTitleLocationKey()
+    public function getTitleLocationKey(): ?string
     {
         return $this->titleLocationKey;
     }
@@ -440,7 +441,7 @@ class PayloadNotificationBuilder
      *
      * @return PayloadNotification
      */
-    public function build()
+    public function build(): PayloadNotification
     {
         return new PayloadNotification($this);
     }

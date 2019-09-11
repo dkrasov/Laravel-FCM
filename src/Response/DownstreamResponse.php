@@ -1,28 +1,31 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response;
 
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class DownstreamResponse.
+ * Class DownstreamResponse
+ *
+ * @package LaravelFCM\Response
  */
 class DownstreamResponse extends BaseResponse implements DownstreamResponseContract
 {
-    const MULTICAST_ID = 'multicast_id';
-    const CANONICAL_IDS = 'canonical_ids';
-    const RESULTS = 'results';
+    public const MULTICAST_ID = 'multicast_id';
+    public const CANONICAL_IDS = 'canonical_ids';
+    public const RESULTS = 'results';
 
-    const MISSING_REGISTRATION = 'MissingRegistration';
-    const MESSAGE_ID = 'message_id';
-    const REGISTRATION_ID = 'registration_id';
-    const NOT_REGISTERED = 'NotRegistered';
-    const INVALID_REGISTRATION = 'InvalidRegistration';
-    const UNAVAILABLE = 'Unavailable';
-    const DEVICE_MESSAGE_RATE_EXCEEDED = 'DeviceMessageRateExceeded';
-    const INTERNAL_SERVER_ERROR = 'InternalServerError';
+    public const MISSING_REGISTRATION = 'MissingRegistration';
+    public const MESSAGE_ID = 'message_id';
+    public const REGISTRATION_ID = 'registration_id';
+    public const NOT_REGISTERED = 'NotRegistered';
+    public const INVALID_REGISTRATION = 'InvalidRegistration';
+    public const UNAVAILABLE = 'Unavailable';
+    public const DEVICE_MESSAGE_RATE_EXCEEDED = 'DeviceMessageRateExceeded';
+    public const INTERNAL_SERVER_ERROR = 'InternalServerError';
 
     /**
      * @internal
@@ -95,9 +98,11 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
 
     /**
      * DownstreamResponse constructor.
-     *
      * @param \Psr\Http\Message\ResponseInterface $response
-     * @param                $tokens
+     * @param $tokens
+     * @throws \LaravelFCM\Response\Exceptions\InvalidRequestException
+     * @throws \LaravelFCM\Response\Exceptions\ServerResponseException
+     * @throws \LaravelFCM\Response\Exceptions\UnauthorizedRequestException
      */
     public function __construct(ResponseInterface $response, $tokens)
     {
@@ -109,9 +114,12 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     /**
      * Parse the response.
      *
-     * @param $responseInJson
+     * @param array $responseInJson
+     *
+     * @return void
+     * @throws \Exception
      */
-    protected function parseResponse($responseInJson)
+    protected function parseResponse($responseInJson): void
     {
         $this->parse($responseInJson);
 
@@ -125,11 +133,13 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     }
 
     /**
+     * @param $responseInJson
+     *
+     * @return void
      * @internal
      *
-     * @param $responseInJson
      */
-    private function parse($responseInJson)
+    private function parse($responseInJson): void
     {
         if (array_key_exists(self::MULTICAST_ID, $responseInJson)) {
             $this->messageId;
@@ -149,56 +159,53 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     }
 
     /**
+     * @param $responseInJson
+     *
+     * @return void
      * @internal
      *
-     * @param $responseInJson
      */
-    private function parseResult($responseInJson)
+    private function parseResult($responseInJson): void
     {
         foreach ($responseInJson[self::RESULTS] as $index => $result) {
-            if (!$this->isSent($result)) {
-                if (!$this->needToBeModify($index, $result)) {
-                    if (!$this->needToBeDeleted($index, $result) && !$this->needToResend($index, $result) && !$this->checkMissingToken($result)) {
-                        $this->needToAddError($index, $result);
-                    }
-                }
+            if (!$this->isSent($result) && !$this->needToBeModify($index, $result) && !$this->needToBeDeleted($index,
+                    $result) && !$this->needToResend($index, $result) && !$this->checkMissingToken($result)) {
+                $this->needToAddError($index, $result);
             }
         }
     }
 
     /**
-     * @internal
-     *
      * @param $responseInJson
      *
      * @return bool
+     * @internal
      */
-    private function needResultParsing($responseInJson)
+    private function needResultParsing($responseInJson): bool
     {
-        return array_key_exists(self::RESULTS, $responseInJson) && ($this->numberTokensFailure > 0 || $this->numberTokenModify > 0);
+        return array_key_exists(self::RESULTS,
+                $responseInJson) && ($this->numberTokensFailure > 0 || $this->numberTokenModify > 0);
     }
 
     /**
-     * @internal
-     *
      * @param $results
      *
      * @return bool
+     * @internal
      */
-    private function isSent($results)
+    private function isSent($results): bool
     {
         return array_key_exists(self::MESSAGE_ID, $results) && !array_key_exists(self::REGISTRATION_ID, $results);
     }
 
     /**
-     * @internal
-     *
      * @param $index
      * @param $result
      *
      * @return bool
+     * @internal
      */
-    private function needToBeModify($index, $result)
+    private function needToBeModify($index, $result): bool
     {
         if (array_key_exists(self::MESSAGE_ID, $result) && array_key_exists(self::REGISTRATION_ID, $result)) {
             if ($this->tokens[$index]) {
@@ -212,17 +219,16 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     }
 
     /**
-     * @internal
-     *
      * @param $index
      * @param $result
      *
      * @return bool
+     * @internal
      */
-    private function needToBeDeleted($index, $result)
+    private function needToBeDeleted($index, $result): bool
     {
         if (array_key_exists(self::ERROR, $result) &&
-            (in_array(self::NOT_REGISTERED, $result) || in_array(self::INVALID_REGISTRATION, $result))) {
+            (in_array(self::NOT_REGISTERED, $result, true) || in_array(self::INVALID_REGISTRATION, $result, true))) {
             if ($this->tokens[$index]) {
                 $this->tokensToDelete[] = $this->tokens[$index];
             }
@@ -234,16 +240,17 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     }
 
     /**
-     * @internal
-     *
      * @param $index
      * @param $result
      *
      * @return bool
+     * @internal
      */
-    private function needToResend($index, $result)
+    private function needToResend($index, $result): bool
     {
-        if (array_key_exists(self::ERROR, $result) && (in_array(self::UNAVAILABLE, $result) || in_array(self::DEVICE_MESSAGE_RATE_EXCEEDED, $result) || in_array(self::INTERNAL_SERVER_ERROR, $result))) {
+        if (array_key_exists(self::ERROR, $result) && (in_array(self::UNAVAILABLE, $result,
+                    true) || in_array(self::DEVICE_MESSAGE_RATE_EXCEEDED, $result,
+                    true) || in_array(self::INTERNAL_SERVER_ERROR, $result, true))) {
             if ($this->tokens[$index]) {
                 $this->tokensToRetry[] = $this->tokens[$index];
             }
@@ -255,48 +262,50 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
     }
 
     /**
-     * @internal
-     *
      * @param $result
      *
      * @return bool
+     * @internal
      */
-    private function checkMissingToken($result)
+    private function checkMissingToken($result): bool
     {
-        $hasMissingToken = (array_key_exists(self::ERROR, $result) && in_array(self::MISSING_REGISTRATION, $result));
+        $hasMissingToken = (array_key_exists(self::ERROR, $result) && in_array(self::MISSING_REGISTRATION, $result,
+                true));
 
-        $this->hasMissingToken = (bool) ($this->hasMissingToken | $hasMissingToken);
+        $this->hasMissingToken = (bool)($this->hasMissingToken | $hasMissingToken);
 
         return $hasMissingToken;
     }
 
     /**
-     * @internal
-     *
      * @param $index
      * @param $result
+     * @return void
+     * @internal
+     *
      */
-    private function needToAddError($index, $result)
+    private function needToAddError($index, $result): void
     {
-        if (array_key_exists(self::ERROR, $result)) {
-            if ($this->tokens[$index]) {
-                $this->tokensWithError[$this->tokens[$index]] = $result[self::ERROR];
-            }
+        if (array_key_exists(self::ERROR, $result) && $this->tokens[$index]) {
+            $this->tokensWithError[$this->tokens[$index]] = $result[self::ERROR];
         }
     }
 
     /**
+     * @return void
+     *@throws \Exception
      * @internal
+     *
      */
-    protected function logResponse()
+    protected function logResponse(): void
     {
         $logger = new Logger('Laravel-FCM');
         $logger->pushHandler(new StreamHandler(storage_path('logs/laravel-fcm.log')));
 
-        $logMessage = 'notification send to '.count($this->tokens).' devices'.PHP_EOL;
-        $logMessage .= 'success: '.$this->numberTokensSuccess.PHP_EOL;
-        $logMessage .= 'failures: '.$this->numberTokensFailure.PHP_EOL;
-        $logMessage .= 'number of modified token : '.$this->numberTokenModify.PHP_EOL;
+        $logMessage = 'notification send to ' . count($this->tokens) . ' devices' . PHP_EOL;
+        $logMessage .= 'success: ' . $this->numberTokensSuccess . PHP_EOL;
+        $logMessage .= 'failures: ' . $this->numberTokensFailure . PHP_EOL;
+        $logMessage .= 'number of modified token : ' . $this->numberTokenModify . PHP_EOL;
 
         $logger->info($logMessage);
     }
@@ -305,8 +314,10 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      * Merge two response.
      *
      * @param DownstreamResponse $response
+     *
+     * @return void
      */
-    public function merge(DownstreamResponse $response)
+    public function merge(DownstreamResponse $response): void
     {
         $this->numberTokensSuccess += $response->numberSuccess();
         $this->numberTokensFailure += $response->numberFailure();
@@ -323,7 +334,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return int
      */
-    public function numberSuccess()
+    public function numberSuccess(): int
     {
         return $this->numberTokensSuccess;
     }
@@ -333,7 +344,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return int
      */
-    public function numberFailure()
+    public function numberFailure(): int
     {
         return $this->numberTokensFailure;
     }
@@ -343,7 +354,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return int
      */
-    public function numberModification()
+    public function numberModification(): int
     {
         return $this->numberTokenModify;
     }
@@ -355,7 +366,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return array
      */
-    public function tokensToDelete()
+    public function tokensToDelete(): array
     {
         return $this->tokensToDelete;
     }
@@ -370,7 +381,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return array
      */
-    public function tokensToModify()
+    public function tokensToModify(): array
     {
         return $this->tokensToModify;
     }
@@ -380,7 +391,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return array
      */
-    public function tokensToRetry()
+    public function tokensToRetry(): array
     {
         return $this->tokensToRetry;
     }
@@ -395,7 +406,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return array
      */
-    public function tokensWithError()
+    public function tokensWithError(): array
     {
         return $this->tokensWithError;
     }
@@ -406,7 +417,7 @@ class DownstreamResponse extends BaseResponse implements DownstreamResponseContr
      *
      * @return bool
      */
-    public function hasMissingToken()
+    public function hasMissingToken(): bool
     {
         return $this->hasMissingToken;
     }

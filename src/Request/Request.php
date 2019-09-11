@@ -1,14 +1,17 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Request;
 
-use LaravelFCM\Message\Topics;
 use LaravelFCM\Message\Options;
 use LaravelFCM\Message\PayloadData;
 use LaravelFCM\Message\PayloadNotification;
+use LaravelFCM\Message\Topics;
 
 /**
- * Class Request.
+ * Class Request
+ *
+ * @package LaravelFCM\Request
  */
 class Request extends BaseRequest
 {
@@ -71,8 +74,9 @@ class Request extends BaseRequest
      * Build the body for the request.
      *
      * @return array
+     * @throws \LaravelFCM\Message\Exceptions\NoTopicProvidedException
      */
-    protected function buildBody()
+    protected function buildBody(): array
     {
         $message = [
             'to' => $this->getTo(),
@@ -88,9 +92,10 @@ class Request extends BaseRequest
     }
 
     /**
-     * get to key transformed.
+     * Get to key transformed.
      *
-     * @return array|null|string
+     * @return array|string|null
+     * @throws \LaravelFCM\Message\Exceptions\NoTopicProvidedException
      */
     protected function getTo()
     {
@@ -104,21 +109,22 @@ class Request extends BaseRequest
     }
 
     /**
-     * get registrationIds transformed.
+     * Get registrationIds transformed.
      *
      * @return array|null
      */
-    protected function getRegistrationIds()
+    protected function getRegistrationIds(): ?array
     {
         return is_array($this->to) ? $this->to : null;
     }
 
     /**
-     * get Options transformed.
+     * Get Options transformed.
      *
      * @return array
+     * @throws \LaravelFCM\Message\Exceptions\NoTopicProvidedException
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $options = $this->options ? $this->options->toArray() : [];
 
@@ -134,7 +140,7 @@ class Request extends BaseRequest
      *
      * @return array|null
      */
-    protected function getNotification()
+    protected function getNotification(): ?array
     {
         return $this->notification ? $this->notification->toArray() : null;
     }
@@ -144,7 +150,7 @@ class Request extends BaseRequest
      *
      * @return array|null
      */
-    protected function getData()
+    protected function getData(): ?array
     {
         return $this->data ? $this->data->toArray() : null;
     }

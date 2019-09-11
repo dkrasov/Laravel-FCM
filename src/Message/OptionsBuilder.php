@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Message;
 
@@ -37,6 +38,7 @@ class OptionsBuilder
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $mutableContent;
@@ -51,7 +53,7 @@ class OptionsBuilder
     /**
      * @internal
      *
-     * @var string
+     * @var null|int
      */
     protected $timeToLive;
 
@@ -75,9 +77,9 @@ class OptionsBuilder
      *
      * @param string $collapseKey
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
+     * @return self
      */
-    public function setCollapseKey($collapseKey)
+    public function setCollapseKey(string $collapseKey): self
     {
         $this->collapseKey = $collapseKey;
 
@@ -90,23 +92,25 @@ class OptionsBuilder
      *
      * @param string $priority
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
-     *
+     * @return self
      * @throws InvalidOptionsException
      * @throws \ReflectionException
      */
-    public function setPriority($priority)
+    public function setPriority(string $priority): self
     {
         if (!OptionsPriorities::isValid($priority)) {
-            throw new InvalidOptionsException('priority is not valid, please refer to the documentation or use the constants of the class "OptionsPriorities"');
+            throw new InvalidOptionsException(
+                'The priority is not valid, please refer to the documentation or use the constants of the class "OptionsPriorities"'
+            );
         }
+
         $this->priority = $priority;
 
         return $this;
     }
 
     /**
-     * support only Android and Ios.
+     * Support only Android and iOS.
      *
      * An inactive client app is awoken.
      * On iOS, use this field to represent content-available in the APNS payload.
@@ -115,9 +119,9 @@ class OptionsBuilder
      *
      * @param bool $contentAvailable
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
+     * @return self
      */
-    public function setContentAvailable($contentAvailable)
+    public function setContentAvailable(bool $contentAvailable): self
     {
         $this->contentAvailable = $contentAvailable;
 
@@ -125,15 +129,16 @@ class OptionsBuilder
     }
 
     /**
-     * support iOS 10+
+     * Support iOS 10+
      *
      * When a notification is sent and this is set to true,
      * the content of the notification can be modified before it is displayed.
      *
-     * @param String $isMutableContent
-     * @return OptionsBuilder
+     * @param string $isMutableContent
+     *
+     * @return self
      */
-    public function setMutableContent($isMutableContent)
+    public function setMutableContent(string $isMutableContent): self
     {
         $this->mutableContent = $isMutableContent;
 
@@ -145,9 +150,9 @@ class OptionsBuilder
      *
      * @param bool $delayWhileIdle
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
+     * @return self
      */
-    public function setDelayWhileIdle($delayWhileIdle)
+    public function setDelayWhileIdle(bool $delayWhileIdle): self
     {
         $this->delayWhileIdle = $delayWhileIdle;
 
@@ -159,15 +164,15 @@ class OptionsBuilder
      *
      * @param int $timeToLive (in second) min:0 max:2419200
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
-     *
+     * @return self
      * @throws InvalidOptionsException
      */
-    public function setTimeToLive($timeToLive)
+    public function setTimeToLive(int $timeToLive): self
     {
         if ($timeToLive < 0 || $timeToLive > 2419200) {
             throw new InvalidOptionsException("time to live must be between 0 and 2419200, current value is: {$timeToLive}");
         }
+
         $this->timeToLive = $timeToLive;
 
         return $this;
@@ -178,9 +183,9 @@ class OptionsBuilder
      *
      * @param string $restrictedPackageName
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
+     * @return self
      */
-    public function setRestrictedPackageName($restrictedPackageName)
+    public function setRestrictedPackageName(string $restrictedPackageName): self
     {
         $this->restrictedPackageName = $restrictedPackageName;
 
@@ -193,9 +198,9 @@ class OptionsBuilder
      *
      * @param bool $isDryRun
      *
-     * @return \LaravelFCM\Message\OptionsBuilder
+     * @return self
      */
-    public function setDryRun($isDryRun)
+    public function setDryRun(bool $isDryRun): self
     {
         $this->dryRun = $isDryRun;
 
@@ -207,7 +212,7 @@ class OptionsBuilder
      *
      * @return null|string
      */
-    public function getCollapseKey()
+    public function getCollapseKey(): ?string
     {
         return $this->collapseKey;
     }
@@ -217,7 +222,7 @@ class OptionsBuilder
      *
      * @return null|string
      */
-    public function getPriority()
+    public function getPriority(): ?string
     {
         return $this->priority;
     }
@@ -227,7 +232,7 @@ class OptionsBuilder
      *
      * @return bool
      */
-    public function isContentAvailable()
+    public function isContentAvailable(): bool
     {
         return $this->contentAvailable;
     }
@@ -235,9 +240,9 @@ class OptionsBuilder
     /**
      * is mutable content
      *
-     * @return bool
+     * @return bool|null
      */
-    public function isMutableContent()
+    public function isMutableContent(): ?bool
     {
         return $this->mutableContent;
     }
@@ -247,7 +252,7 @@ class OptionsBuilder
      *
      * @return bool
      */
-    public function isDelayWhileIdle()
+    public function isDelayWhileIdle(): bool
     {
         return $this->delayWhileIdle;
     }
@@ -257,7 +262,7 @@ class OptionsBuilder
      *
      * @return null|int
      */
-    public function getTimeToLive()
+    public function getTimeToLive(): ?int
     {
         return $this->timeToLive;
     }
@@ -267,7 +272,7 @@ class OptionsBuilder
      *
      * @return null|string
      */
-    public function getRestrictedPackageName()
+    public function getRestrictedPackageName(): ?string
     {
         return $this->restrictedPackageName;
     }
@@ -277,7 +282,7 @@ class OptionsBuilder
      *
      * @return bool
      */
-    public function isDryRun()
+    public function isDryRun(): bool
     {
         return $this->dryRun;
     }
@@ -287,7 +292,7 @@ class OptionsBuilder
      *
      * @return Options
      */
-    public function build()
+    public function build(): Options
     {
         return new Options($this);
     }
@@ -301,19 +306,20 @@ final class OptionsPriorities
     /**
      * @const high priority : iOS, these correspond to APNs priorities 10.
      */
-    const high = 'high';
+    public const high = 'high';
 
     /**
      * @const normal priority : iOS, these correspond to APNs priorities 5
      */
-    const normal = 'normal';
+    public const normal = 'normal';
 
     /**
-     * @return array priorities available in fcm
+     * priorities available in FCM.
      *
+     * @return array
      * @throws \ReflectionException
      */
-    public static function getPriorities()
+    public static function getPriorities(): array
     {
         $class = new ReflectionClass(__CLASS__);
 
@@ -321,16 +327,15 @@ final class OptionsPriorities
     }
 
     /**
-     * check if this priority is supported by fcm.
+     * Check if this priority is supported by fcm.
      *
      * @param $priority
      *
      * @return bool
-     *
      * @throws \ReflectionException
      */
-    public static function isValid($priority)
+    public static function isValid($priority): bool
     {
-        return in_array($priority, static::getPriorities());
+        return in_array($priority, static::getPriorities(), true);
     }
 }

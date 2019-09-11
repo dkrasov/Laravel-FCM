@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Sender;
 
@@ -6,23 +7,26 @@ use LaravelFCM\Request\GroupRequest;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class FCMGroup.
+ * Class FCMGroup
+ *
+ * @package LaravelFCM\Sender
  */
 class FCMGroup extends HTTPSender
 {
-    const CREATE = 'create';
-    const ADD = 'add';
-    const REMOVE = 'remove';
+    public const CREATE = 'create';
+    public const ADD = 'add';
+    public const REMOVE = 'remove';
 
     /**
      * Create a group.
      *
-     * @param       $notificationKeyName
+     * @param $notificationKeyName
      * @param array $registrationIds
      *
-     * @return null|string notification_key
+     * @return string|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createGroup($notificationKeyName, array $registrationIds)
+    public function createGroup($notificationKeyName, array $registrationIds): ?string
     {
         $request = new GroupRequest(self::CREATE, $notificationKeyName, null, $registrationIds);
 
@@ -32,14 +36,16 @@ class FCMGroup extends HTTPSender
     }
 
     /**
-     * add registrationId to a existing group.
+     * Add registrationId to a existing group.
      *
-     * @param       $notificationKeyName
-     * @param       $notificationKey
-     * @param array $registrationIds     registrationIds to add
-     * @return null|string notification_key
+     * @param $notificationKeyName
+     * @param $notificationKey
+     * @param array $registrationIds
+     *
+     * @return string|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function addToGroup($notificationKeyName, $notificationKey, array $registrationIds)
+    public function addToGroup($notificationKeyName, $notificationKey, array $registrationIds): ?string
     {
         $request = new GroupRequest(self::ADD, $notificationKeyName, $notificationKey, $registrationIds);
         $response = $this->client->request('post', $this->url, $request->build());
@@ -48,16 +54,17 @@ class FCMGroup extends HTTPSender
     }
 
     /**
-     * remove registrationId to a existing group.
+     * Remove registrationId to a existing group.
+     * Note: if you remove all registrationIds the group is automatically deleted
      *
-     * >Note: if you remove all registrationIds the group is automatically deleted
+     * @param $notificationKeyName
+     * @param $notificationKey
+     * @param array $registeredIds
      *
-     * @param       $notificationKeyName
-     * @param       $notificationKey
-     * @param array $registeredIds       registrationIds to remove
-     * @return null|string notification_key
+     * @return string|null
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function removeFromGroup($notificationKeyName, $notificationKey, array $registeredIds)
+    public function removeFromGroup($notificationKeyName, $notificationKey, array $registeredIds): ?string
     {
         $request = new GroupRequest(self::REMOVE, $notificationKeyName, $notificationKey, $registeredIds);
         $response = $this->client->request('post', $this->url, $request->build());
@@ -66,12 +73,12 @@ class FCMGroup extends HTTPSender
     }
 
     /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @return null|string
      * @internal
      *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @return null|string notification_key
      */
-    private function getNotificationToken(ResponseInterface $response)
+    private function getNotificationToken(ResponseInterface $response): ?string
     {
         if (! $this->isValidResponse($response)) {
             return null;
@@ -87,7 +94,7 @@ class FCMGroup extends HTTPSender
      *
      * @return bool
      */
-    public function isValidResponse(ResponseInterface $response)
+    public function isValidResponse(ResponseInterface $response): bool
     {
         return $response->getStatusCode() === 200;
     }

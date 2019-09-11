@@ -1,9 +1,12 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response;
 
 /**
- * Interface DownstreamResponseContract.
+ * Interface DownstreamResponseContract
+ *
+ * @package LaravelFCM\Response
  */
 interface DownstreamResponseContract
 {
@@ -19,21 +22,21 @@ interface DownstreamResponseContract
      *
      * @return int
      */
-    public function numberSuccess();
+    public function numberSuccess(): int;
 
     /**
      * Get the number of device which thrown an error.
      *
      * @return int
      */
-    public function numberFailure();
+    public function numberFailure(): int;
 
     /**
      * Get the number of device that you need to modify their token.
      *
      * @return int
      */
-    public function numberModification();
+    public function numberModification(): int;
 
     /**
      * get token to delete.
@@ -42,7 +45,7 @@ interface DownstreamResponseContract
      *
      * @return array
      */
-    public function tokensToDelete();
+    public function tokensToDelete(): array;
 
     /**
      * get token to modify.
@@ -54,14 +57,14 @@ interface DownstreamResponseContract
      *
      * @return array
      */
-    public function tokensToModify();
+    public function tokensToModify(): array;
 
     /**
      * Get tokens that you should resend using exponential backoof.
      *
      * @return array
      */
-    public function tokensToRetry();
+    public function tokensToRetry(): array;
 
     /**
      * Get tokens that thrown an error.
@@ -73,7 +76,7 @@ interface DownstreamResponseContract
      *
      * @return array
      */
-    public function tokensWithError();
+    public function tokensWithError(): array;
 
     /**
      * check if missing tokens was given to the request
@@ -81,5 +84,5 @@ interface DownstreamResponseContract
      *
      * @return bool
      */
-    public function hasMissingToken();
+    public function hasMissingToken(): bool;
 }

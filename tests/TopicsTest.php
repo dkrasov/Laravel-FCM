@@ -2,9 +2,9 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use LaravelFCM\Message\Exceptions\NoTopicProvidedException;
 use LaravelFCM\Message\Topics;
 use LaravelFCM\Sender\FCMSender;
-use LaravelFCM\Message\Exceptions\NoTopicProvidedException;
 
 class TopicsTest extends FCMTestCase
 {
@@ -15,7 +15,7 @@ class TopicsTest extends FCMTestCase
     {
         $topics = new Topics();
 
-        $this->setExpectedException(NoTopicProvidedException::class);
+        $this->expectException(NoTopicProvidedException::class);
         $topics->build();
     }
 

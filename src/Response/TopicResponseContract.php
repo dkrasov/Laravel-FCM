@@ -1,9 +1,12 @@
 <?php
+declare(strict_types = 1);
 
 namespace LaravelFCM\Response;
 
 /**
- * Interface TopicResponseContract.
+ * Interface TopicResponseContract
+ *
+ * @package LaravelFCM\Response
  */
 interface TopicResponseContract
 {
@@ -12,20 +15,20 @@ interface TopicResponseContract
      *
      * @return bool
      */
-    public function isSuccess();
+    public function isSuccess(): bool;
 
     /**
      * return error message
      * you should test if it's necessary to resent it.
      *
-     * @return string error
+     * @return string|null
      */
-    public function error();
+    public function error(): ?string;
 
     /**
      * return true if it's necessary resent it using exponential backoff.
      *
      * @return bool
      */
-    public function shouldRetry();
+    public function shouldRetry(): bool;
 }
